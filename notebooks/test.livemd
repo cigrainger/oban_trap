@@ -1,0 +1,29 @@
+# Flow causing zombie jobs in Oban
+
+## Section
+
+```elixir
+import Ecto.Query
+alias ObanTrap.Repo
+alias ObanTrap.Worker
+```
+
+```elixir
+{:ok, %{id: id}} = %{type: :spawn_link} |> Worker.new() |> Oban.insert()
+```
+
+```elixir
+Repo.all(from(j in "oban_jobs", where: j.id == ^id, select: j.state))
+```
+
+```elixir
+{:ok, %{id: id}} = %{type: :flow} |> Worker.new() |> Oban.insert()
+```
+
+```elixir
+Repo.all(from(j in "oban_jobs", where: j.id == ^id, select: j.state))
+```
+
+```elixir
+id
+```
